@@ -24,7 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+        <activity android:name=".CameraWarningActivity" />
+        <activity android:name=".MicWarningActivity" />
+        <activity android:name=".SecurityAlertActivity" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false"

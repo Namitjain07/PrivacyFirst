@@ -1,11 +1,11 @@
 package com.secure.privacyfirst
 
+import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,17 +19,17 @@ import com.secure.privacyfirst.ui.theme.PrivacyFirstTheme
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Enable WebView debugging
         WebView.setWebContentsDebuggingEnabled(true)
-        
+
         enableEdgeToEdge()
-        
+
         // Make status bar transparent
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = Color.Transparent.toArgb()
         window.navigationBarColor = Color.Transparent.toArgb()
-        
+
         setContent {
             PrivacyFirstTheme {
                 Surface(
@@ -40,10 +40,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+//        // ✅ Start CameraWarningActivity
+//        val intent = Intent(this, CameraWarningActivity::class.java)
+//        startActivity(intent)
     }
 
     override fun onBackPressed() {
-        // Handle back button press
-        super.onBackPressedDispatcher.onBackPressed()
+        onBackPressedDispatcher.onBackPressed() // ✅ Fixed line
     }
 }
