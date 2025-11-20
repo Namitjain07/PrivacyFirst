@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warning Tests - PrivacyFirst</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .test-section {
+            margin-bottom: 25px;
+        }
+        
+        .test-title {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .test-description {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .test-button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .test-button:active {
+            transform: scale(0.98);
+        }
+        
+        .camera-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .camera-btn:hover {
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .mic-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .mic-btn:hover {
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+        }
+        
+        .external-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .external-btn:hover {
+            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.4);
+        }
+        
+        .home-btn {
+            background: #f5f5f5;
+            color: #333;
+            margin-top: 20px;
+        }
+        
+        .home-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 25px 0;
+        }
+        
+        .icon {
+            font-size: 24px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛡️</div>
+            <h1>Warning System Test</h1>
+            <div class="subtitle">Test all security warning dialogs</div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">
+                <span class="icon">📷</span>
+                Camera Access Warning
+            </div>
+            <div class="test-description">
+                Tests the camera permission warning dialog. Click to request camera access.
+            </div>
+            <button class="test-button camera-btn" onclick="testCamera()">
+                <span>Test Camera Warning</span>
+                <span>→</span>
+            </button>
+            <div id="cameraStatus" class="status"></div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="test-section">
+            <div class="test-title">
+                <span class="icon">🎤</span>
+                Microphone Access Warning
+            </div>
+            <div class="test-description">
+                Tests the microphone permission warning dialog. Click to request microphone access.
+            </div>
+            <button class="test-button mic-btn" onclick="testMicrophone()">
+                <span>Test Microphone Warning</span>
+                <span>→</span>
+            </button>
+            <div id="micStatus" class="status"></div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="test-section">
+            <div class="test-title">
+                <span class="icon">⚠️</span>
+                External App Warning
+            </div>
+            <div class="test-description">
+                Tests the external website warning dialog. Click to navigate to a non-whitelisted site.
+            </div>
+            <button class="test-button external-btn" onclick="testExternalLink()">
+                <span>Test External Warning</span>
+                <span>→</span>
+            </button>
+            <div id="externalStatus" class="status"></div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <button class="test-button home-btn" onclick="goHome()">
+            <span>← Back to Home</span>
+        </button>
+    </div>
+    
+    <script>
+        async function testCamera() {
+            const statusDiv = document.getElementById('cameraStatus');
+            statusDiv.className = 'status';
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✓ Camera warning triggered! Check if dialog appeared.';
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '✗ Camera access denied or warning shown.';
+                console.log('Camera test:', error);
+            }
+        }
+        
+        async function testMicrophone() {
+            const statusDiv = document.getElementById('micStatus');
+            statusDiv.className = 'status';
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✓ Microphone warning triggered! Check if dialog appeared.';
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '✗ Microphone access denied or warning shown.';
+                console.log('Microphone test:', error);
+            }
+        }
+        
+        function testExternalLink() {
+            const statusDiv = document.getElementById('externalStatus');
+            statusDiv.className = 'status success';
+            statusDiv.textContent = '✓ Attempting to navigate to external site...';
+            
+            // Try to navigate to Google (not in whitelist)
+            setTimeout(() => {
+                window.location.href = 'https://www.google.com';
+            }, 500);
+        }
+        
+        function goHome() {
+            window.location.href = 'file:///android_asset/index.html';
+        }
+    </script>
+</body>
+</html>
