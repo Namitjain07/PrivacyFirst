@@ -222,7 +222,7 @@ fun AuthScreen(
                 disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
-            Text("SUBMIT", color = Color.DarkGray)
+            Text("SUBMIT", color = Color.White)
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text("OR", color = Color.Gray)

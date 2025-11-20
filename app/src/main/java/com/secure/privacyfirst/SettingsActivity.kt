@@ -104,17 +104,23 @@ fun SettingsScreen(
     val preferencesManager = remember { UserPreferencesManager(context) }
     val currentSecurityLevel by preferencesManager.securityLevel.collectAsState(initial = SecurityLevel.MEDIUM)
     val coroutineScope = rememberCoroutineScope()
+
     var showSecurityInfoDialog by remember { mutableStateOf(false) }
-    
+
     Scaffold(
         modifier = Modifier.statusBarsPadding(),
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = {
+                    Text(
+                        "Settings",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -122,67 +128,64 @@ fun SettingsScreen(
             )
         }
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 18.dp)
         ) {
-            // Security Level Section
-            Text(
-                text = "Security Level",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+
+            // -------------------- SECURITY LEVEL --------------------
+            SectionHeader("Security Level")
+
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+
+                    // Title Row
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "🔐 Security Settings",
+                            "🔐 Security Settings",
                             style = MaterialTheme.typography.titleMedium
                         )
                         IconButton(onClick = { showSecurityInfoDialog = true }) {
                             Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = "Security Level Info",
+                                Icons.Default.Info,
+                                contentDescription = "Info",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
+
+                    Spacer(Modifier.height(6.dp))
+
                     Text(
-                        text = "Current Level: ${currentSecurityLevel.getDisplayName()}",
+                        "Current Level: ${currentSecurityLevel.getDisplayName()}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
-                    Text(
-                        text = currentSecurityLevel.getDescription(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Security Level Selector
-                    Column(modifier = Modifier.fillMaxWidth()) {
+
+                    Spacer(Modifier.height(12.dp))
+
+                    // Radio Buttons (Clean Layout)
+                    Column {
                         SecurityLevel.entries.forEach { level ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
+                                    .padding(vertical = 6.dp)
+                                    .clickable {
+                                        coroutineScope.launch {
+                                            preferencesManager.setSecurityLevel(level)
+                                        }
+                                    },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 RadioButton(
@@ -193,16 +196,13 @@ fun SettingsScreen(
                                         }
                                     }
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(Modifier.width(8.dp))
                                 Column {
+                                    Text(level.getDisplayName(), style = MaterialTheme.typography.bodyLarge)
                                     Text(
-                                        text = level.getDisplayName(),
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                    Text(
-                                        text = level.getDescription(),
+                                        level.getDescription(),
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
@@ -210,220 +210,63 @@ fun SettingsScreen(
                     }
                 }
             }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text(
-                text = "Password Management",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+
+            Spacer(Modifier.height(24.dp))
+
+            // -------------------- PASSWORD MANAGEMENT --------------------
+            SectionHeader("Password Management")
+
+            SettingsListItem(
+                title = "🔐 Password Manager",
+                subtitle = "Manage your saved passwords securely",
+                onClick = onNavigateToPasswordManager
             )
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .clickable { onNavigateToPasswordManager() }
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "🔐 Password Manager",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Manage your saved passwords securely",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "Go to Password Manager",
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-            }
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .clickable { onNavigateToSetupPin() }
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "🔢 Setup PIN",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Create or change your security PIN",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "Go to Setup PIN",
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text(
-                text = "Privacy & Security Settings",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+
+            SettingsListItem(
+                title = "🔢 Setup PIN",
+                subtitle = "Create or change your security PIN",
+                onClick = onNavigateToSetupPin
             )
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "🔒 HTTPS Only",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Only secure HTTPS connections are allowed. HTTP traffic is blocked.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "🛡️ SSL Certificate Verification",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Connections verified with SSL certificates. Trusted banking sites are allowed to proceed.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "🏦 Trusted Banking Sites Only",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Access restricted to verified banking domains: SBI, ICICI, Kotak, YES Bank, Citi, AMEX, UCO, IndusInd.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "🧹 Clear Browsing Data",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Automatically cleared after each session. No cookies, no history, no traces.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "🔐 Enhanced Privacy",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Geolocation disabled, form data not saved, mixed content blocked.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
+
+            Spacer(Modifier.height(24.dp))
+
+            // -------------------- PRIVACY & SECURITY --------------------
+            SectionHeader("Privacy & Security Settings")
+
+            InfoCard("🔒 HTTPS Only", "Only secure HTTPS connections are allowed. HTTP traffic is blocked.")
+            InfoCard("🛡️ SSL Certificate Verification", "Connections verified with SSL certificates.")
+            InfoCard("🏦 Trusted Banking Sites Only", "Only verified banking domains are allowed.")
+            InfoCard("🧹 Clear Browsing Data", "History, cookies, and cache are cleared after each session.")
+            InfoCard("🔐 Enhanced Privacy", "Geolocation disabled. Mixed content blocked.")
         }
     }
-    
-    // Security Info Dialog
+
+    // --------------- SECURITY INFO DIALOG ------------------
     if (showSecurityInfoDialog) {
         AlertDialog(
             onDismissRequest = { showSecurityInfoDialog = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Info"
-                )
-            },
-            title = {
-                Text(text = "Security Levels Explained")
-            },
+            title = { Text("Security Levels Explained") },
             text = {
                 Column {
                     Text(
-                        text = "Choose the security level that fits your needs:",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        "Choose the level that suits your needs:",
+                        style = MaterialTheme.typography.bodyMedium
                     )
-                    
+                    Spacer(Modifier.height(12.dp))
+
                     SecurityLevel.entries.forEach { level ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                            elevation = CardDefaults.elevatedCardElevation(2.dp)
                         ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
+                            Column(Modifier.padding(12.dp)) {
                                 Text(
-                                    text = level.getDisplayName(),
-                                    style = MaterialTheme.typography.titleSmall,
+                                    level.getDisplayName(),
+                                    style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = level.getDetailedDescription(),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Spacer(Modifier.height(4.dp))
+                                Text(level.getDetailedDescription())
                             }
                         }
                     }
@@ -435,5 +278,65 @@ fun SettingsScreen(
                 }
             }
         )
+    }
+}
+
+// -------------------- REUSABLE COMPONENTS --------------------
+
+@Composable
+fun SectionHeader(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Composable
+fun SettingsListItem(title: String, subtitle: String, onClick: () -> Unit) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+            .clickable { onClick() },
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun InfoCard(title: String, subtitle: String) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
