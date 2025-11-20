@@ -42,128 +42,98 @@ fun SetupScreen(
     var isConfirmPinVisible by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
-    
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferencesManager = remember { UserPreferencesManager(context) }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(60.dp))
-        
-        // Header
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        // ---------- HEADER (clean, simple) ----------
         Text(
             text = "Complete Your Setup",
+            modifier = Modifier.padding(top = 32.dp),
             style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.Bold
             ),
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
-            text = "Please enter your name and create a secure PIN",
+            text = "Enter your name and create a secure PIN",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
-        
-        Spacer(modifier = Modifier.height(48.dp))
-        
-        // Name Input
-        OutlinedTextField(
-            value = userName,
-            onValueChange = { 
-                userName = it
-                showError = false
-            },
-            label = { Text("Your Name") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
-            )
-        )
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // PIN Input
-        OutlinedTextField(
-            value = pin,
-            onValueChange = { 
-                if (it.length <= 6 && it.all { char -> char.isDigit() }) {
-                    pin = it
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        // ---------- INPUT FIELDS ----------
+        Column(
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Name
+            ModernInputField(
+                value = userName,
+                onChange = {
+                    userName = it
                     showError = false
-                }
-            },
-            label = { Text("Create 4-6 Digit PIN") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            visualTransformation = if (isPinVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            trailingIcon = {
-                IconButton(onClick = { isPinVisible = !isPinVisible }) {
-                    Icon(
-                        imageVector = if (isPinVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = if (isPinVisible) "Hide PIN" else "Show PIN"
-                    )
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                },
+                label = "Your Name"
             )
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Confirm PIN Input
-        OutlinedTextField(
-            value = confirmPin,
-            onValueChange = { 
-                if (it.length <= 6 && it.all { char -> char.isDigit() }) {
-                    confirmPin = it
-                    showError = false
-                }
-            },
-            label = { Text("Confirm PIN") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            visualTransformation = if (isConfirmPinVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            trailingIcon = {
-                IconButton(onClick = { isConfirmPinVisible = !isConfirmPinVisible }) {
-                    Icon(
-                        imageVector = if (isConfirmPinVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = if (isConfirmPinVisible) "Hide PIN" else "Show PIN"
-                    )
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
-            ),
-            isError = showError
-        )
-        
+
+            // PIN
+            ModernPinField(
+                value = pin,
+                onChange = {
+                    if (it.length <= 6 && it.all { c -> c.isDigit() }) {
+                        pin = it
+                        showError = false
+                    }
+                },
+                label = "Create 4–6 Digit PIN",
+                visible = isPinVisible,
+                changeVisibility = { isPinVisible = !isPinVisible }
+            )
+
+            // Confirm PIN
+            ModernPinField(
+                value = confirmPin,
+                onChange = {
+                    if (it.length <= 6 && it.all { c -> c.isDigit() }) {
+                        confirmPin = it
+                        showError = false
+                    }
+                },
+                label = "Confirm PIN",
+                visible = isConfirmPinVisible,
+                changeVisibility = { isConfirmPinVisible = !isConfirmPinVisible },
+                isError = showError
+            )
+        }
+
         if (showError) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
-        // Setup Button
+
+        // ---------- BUTTON ----------
         Button(
             onClick = {
                 when {
@@ -182,27 +152,24 @@ fun SetupScreen(
                     else -> {
                         scope.launch {
                             try {
-                                // Hash and save PIN
                                 val hashedPin = CryptoUtils.hashPin(pin)
                                 pinDao.insertPin(
                                     PinEntity(
                                         encryptedPin = hashedPin
                                     )
                                 )
-                                
-                                // Save setup completion and user name
                                 preferencesManager.setSetupCompleted(userName)
-                                
+
                                 Toast.makeText(
                                     context,
-                                    "Setup completed successfully!",
+                                    "Setup complete!",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                
+
                                 onSetupComplete()
                             } catch (e: Exception) {
                                 showError = true
-                                errorMessage = "Failed to save setup: ${e.message}"
+                                errorMessage = "Failed to save: ${e.message}"
                             }
                         }
                     }
@@ -211,9 +178,7 @@ fun SetupScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
+            shape = RoundedCornerShape(14.dp),
             enabled = userName.isNotBlank() && pin.length >= 4 && confirmPin.length >= 4
         ) {
             Text(
@@ -223,39 +188,103 @@ fun SetupScreen(
                 )
             )
         }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Info text
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            )
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "💡",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(end = 12.dp)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ---------- INFO CARD ----------
+        InfoCardUI()
+    }
+}
+
+/* ----------------------------------
+     REUSABLE UI COMPONENTS (NO GRADIENTS)
+   ---------------------------------- */
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ModernInputField(
+    value: String,
+    onChange: (String) -> Unit,
+    label: String
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onChange,
+        label = { Text(label) },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp)
+        ,
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+            focusedBorderColor = MaterialTheme.colorScheme.primary
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ModernPinField(
+    value: String,
+    onChange: (String) -> Unit,
+    label: String,
+    visible: Boolean,
+    changeVisibility: () -> Unit,
+    isError: Boolean = false
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onChange,
+        label = { Text(label) },
+        singleLine = true,
+        isError = isError,
+        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+        trailingIcon = {
+            IconButton(onClick = changeVisibility) {
+                Icon(
+                    imageVector = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    contentDescription = null
                 )
-                Column {
-                    Text(
-                        text = "Your PIN protects your passwords",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Make sure to remember it - there's no way to recover a forgotten PIN.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                    )
-                }
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp)),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+            focusedBorderColor = MaterialTheme.colorScheme.primary
+        )
+    )
+}
+
+@Composable
+fun InfoCardUI() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("💡", fontSize = 22.sp, modifier = Modifier.padding(end = 12.dp))
+
+            Column {
+                Text(
+                    "Your PIN protects your passwords",
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    "Remember it — it cannot be recovered.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

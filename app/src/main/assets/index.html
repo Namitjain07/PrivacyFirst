@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Privacy First Browser</title>
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #F5F5F5;
             min-height: 100vh;
-            padding: 0;
         }
-        
+
+        /* Header */
         .header {
             background: white;
             padding: 16px 20px;
@@ -26,13 +27,13 @@
             justify-content: space-between;
             border-bottom: 1px solid #E0E0E0;
         }
-        
+
         .logo-section {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        
+
         .logo-icon {
             width: 40px;
             height: 40px;
@@ -45,23 +46,23 @@
             font-size: 20px;
             font-weight: bold;
         }
-        
+
         .logo-text {
             display: flex;
             flex-direction: column;
         }
-        
+
         .logo-title {
             font-size: 14px;
             font-weight: 600;
             color: #1E3A5F;
         }
-        
+
         .logo-subtitle {
             font-size: 12px;
             color: #666;
         }
-        
+
         .settings-btn {
             width: 40px;
             height: 40px;
@@ -74,15 +75,16 @@
             cursor: pointer;
             font-size: 20px;
         }
-        
+
         .settings-btn:active {
             background: #E0E0E0;
         }
-        
+
+        /* Content */
         .content {
             padding: 20px;
         }
-        
+
         .search-box {
             width: 100%;
             padding: 12px 16px;
@@ -92,18 +94,19 @@
             background: white;
             margin-bottom: 24px;
         }
-        
+
         .search-box::placeholder {
             color: #999;
         }
-        
+
+        /* Banks Grid */
         .banks-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
-        
+
         .bank-item {
             display: flex;
             flex-direction: column;
@@ -111,7 +114,7 @@
             text-decoration: none;
             color: inherit;
         }
-        
+
         .bank-icon {
             width: 64px;
             height: 64px;
@@ -124,20 +127,21 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             font-size: 32px;
         }
-        
+
         .bank-name {
             font-size: 12px;
             color: #333;
             text-align: center;
         }
-        
+
+        /* Info card */
         .info-card {
             background: #1A3A2E;
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 16px;
         }
-        
+
         .info-card-image {
             width: 100%;
             height: 160px;
@@ -147,42 +151,44 @@
             justify-content: center;
             font-size: 60px;
         }
-        
+
         .info-card-text {
             padding: 16px;
             background: white;
         }
-        
+
         .info-card-title {
             font-size: 14px;
             color: #333;
             line-height: 1.5;
         }
-        
+
+        /* Footer */
         .footer-text {
             text-align: center;
             font-size: 12px;
             color: #999;
             padding: 16px;
         }
-        
+
         .footer-link {
             color: #1E3A5F;
             text-decoration: none;
             font-weight: 600;
         }
-        
+
         .lock-icon {
             color: #999;
             margin-right: 4px;
         }
 
+        /* Mobile */
         @media (max-width: 600px) {
             .banks-grid {
                 grid-template-columns: repeat(4, 1fr);
                 gap: 12px;
             }
-            
+
             .bank-icon {
                 width: 56px;
                 height: 56px;
@@ -190,98 +196,109 @@
         }
     </style>
 </head>
+
 <body>
-    <div class="header">
-        <div class="logo-section">
-            <div class="logo-icon">🛡️</div>
-            <div class="logo-text">
-                <div class="logo-title">PRIVACY FIRST <span style="color: #999; font-weight: normal;">BROWSER</span></div>
-                <div class="logo-subtitle">Welcome, Nimit</div>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="logo-section">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">
+            <div class="logo-title">
+                PRIVACY FIRST <span style="color: #999; font-weight: normal;">BROWSER</span>
             </div>
-        </div>
-        <button class="settings-btn" onclick="openSettings()">⚙️</button>
-    </div>
-    
-    <div class="content">
-        <input type="text" class="search-box" placeholder="Search" id="searchBox" oninput="filterBanks()">
-        
-        <div class="banks-grid" id="banksGrid">
-            <a href="https://onlinesbi.sbi.bank.in/" class="bank-item" data-name="SBI">
-                <div class="bank-icon" style="background: #E8F4FD;">💼</div>
-                <div class="bank-name">SBI</div>
-            </a>
-            
-            <a href="https://infinity.icicibank.com/corp/AuthenticationController?FORMSGROUP_ID__=AuthenticationFG&__START_TRAN_FLAG__=Y&FG_BUTTONS__=LOAD&ACTION.LOAD=Y&AuthenticationFG.LOGIN_FLAG=1&BANK_ID=ICI" class="bank-item" data-name="ICICI">
-                <div class="bank-icon" style="background: #FFF0E8;">🏦</div>
-                <div class="bank-name">ICICI</div>
-            </a>
-            
-            <a href="https://netbanking.kotak.com/knb2/" class="bank-item" data-name="Kotak">
-                <div class="bank-icon" style="background: #E8F0FF;">🔵</div>
-                <div class="bank-name">Kotak</div>
-            </a>
-            
-            <a href="https://www.yesbank.in/digital-banking/yes-netbanking" class="bank-item" data-name="YES">
-                <div class="bank-icon" style="background: #FFE8E8;">✓</div>
-                <div class="bank-name">YES</div>
-            </a>
-            
-            <a href="https://www.online.citibank.co.in/portal/newgen/login.c" class="bank-item" data-name="Citi">
-                <div class="bank-icon" style="background: #E8F0FF;">🏛️</div>
-                <div class="bank-name">Citi</div>
-            </a>
-            
-            <a href="https://www.americanexpress.com/en-in/account/login" class="bank-item" data-name="AMEX">
-                <div class="bank-icon" style="background: #E8F4FD;">💳</div>
-                <div class="bank-name">AMEX</div>
-            </a>
-            
-            <a href="https://www.ucobank.com/english/internet-banking.aspx" class="bank-item" data-name="UCO">
-                <div class="bank-icon" style="background: #E8F0FF;">🏢</div>
-                <div class="bank-name">UCO</div>
-            </a>
-            
-            <a href="https://www.indusind.com/in/en/personal/digital-banking/indusnet.html" class="bank-item" data-name="IndusInd">
-                <div class="bank-icon" style="background: #FFE8F0;">🦁</div>
-                <div class="bank-name">IndusInd</div>
-            </a>
-        </div>
-        
-        <div class="info-card">
-            <div class="info-card-image">💳</div>
-            <div class="info-card-text">
-                <div class="info-card-title">Online banking security: Top practices for safe banking</div>
-            </div>
-        </div>
-        
-        <div class="footer-text">
-            <span class="lock-icon">🔒</span>
-            Banking sessions are encrypted & phishing-protected
-            <br>
-            <a href="#" class="footer-link">Learn more</a>
+            <div class="logo-subtitle">Welcome, Nimit</div>
         </div>
     </div>
-    
-    <script>
-        function openSettings() {
-            if (window.Android) {
-                window.Android.openSettings();
-            }
+
+    <button class="settings-btn" onclick="openSettings()">⚙️</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <input type="text" class="search-box" placeholder="Search" id="searchBox" oninput="filterBanks()">
+
+    <div class="banks-grid" id="banksGrid">
+
+        <a href="https://onlinesbi.sbi.bank.in/" class="bank-item" data-name="SBI">
+            <div class="bank-icon" style="background:#E8F4FD;">💼</div>
+            <div class="bank-name">SBI</div>
+        </a>
+
+        <a href="https://infinity.icicibank.com/corp/AuthenticationController?FORMSGROUP_ID__=AuthenticationFG" class="bank-item" data-name="ICICI">
+            <div class="bank-icon" style="background:#FFF0E8;">🏦</div>
+            <div class="bank-name">ICICI</div>
+        </a>
+
+        <a href="https://netbanking.kotak.com/knb2/" class="bank-item" data-name="Kotak">
+            <div class="bank-icon" style="background:#E8F0FF;">🔵</div>
+            <div class="bank-name">Kotak</div>
+        </a>
+
+        <a href="https://www.yesbank.in/digital-banking/yes-netbanking" class="bank-item" data-name="YES">
+            <div class="bank-icon" style="background:#FFE8E8;">✓</div>
+            <div class="bank-name">YES Bank</div>
+        </a>
+
+        <a href="https://www.online.citibank.co.in/portal/newgen/login.c" class="bank-item" data-name="Citi">
+            <div class="bank-icon" style="background:#E8F0FF;">🏛️</div>
+            <div class="bank-name">Citi Bank</div>
+        </a>
+
+        <a href="https://www.americanexpress.com/en-in/account/login" class="bank-item" data-name="AMEX">
+            <div class="bank-icon" style="background:#E8F4FD;">💳</div>
+            <div class="bank-name">AMEX</div>
+        </a>
+
+        <a href="https://www.ucobank.com/english/internet-banking.aspx" class="bank-item" data-name="UCO">
+            <div class="bank-icon" style="background:#E8F0FF;">🏢</div>
+            <div class="bank-name">UCO Bank</div>
+        </a>
+
+        <a href="https://www.indusind.com/in/en/personal/digital-banking/indusnet.html" class="bank-item" data-name="IndusInd">
+            <div class="bank-icon" style="background:#FFE8F0;">🦁</div>
+            <div class="bank-name">IndusInd</div>
+        </a>
+
+    </div>
+
+    <!-- INFO CARD -->
+    <div class="info-card">
+        <div class="info-card-image">💳</div>
+        <div class="info-card-text">
+            <div class="info-card-title">
+                Online banking security: Top practices for safe banking
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-text">
+        <span class="lock-icon">🔒</span>
+        Banking sessions are encrypted & phishing-protected <br>
+        <a href="#" class="footer-link">Learn more</a>
+    </div>
+
+</div>
+
+<script>
+    function openSettings() {
+        if (window.Android) {
+            window.Android.openSettings();
         }
-        
-        function filterBanks() {
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            const bankItems = document.querySelectorAll('.bank-item');
-            
-            bankItems.forEach(item => {
-                const bankName = item.getAttribute('data-name').toLowerCase();
-                if (bankName.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-    </script>
+    }
+
+    function filterBanks() {
+        const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+        const items = document.querySelectorAll(".bank-item");
+
+        items.forEach(item => {
+            const name = item.getAttribute("data-name").toLowerCase();
+            item.style.display = name.includes(searchTerm) ? "flex" : "none";
+        });
+    }
+</script>
+
 </body>
 </html>
