@@ -1,7 +1,6 @@
 package com.secure.privacyfirst.ui.screens
 
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
@@ -119,7 +118,7 @@ fun AuthScreen(
         ) {
 
             Image(
-                painter = painterResource(id = com.secure.privacyfirst.R.drawable.logo),
+                painter = painterResource(id = com.secure.privacyfirst.R.drawable.logo_full),
                 contentDescription = "App Logo",
                 modifier = Modifier.size(40.dp)
             )
