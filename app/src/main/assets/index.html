@@ -41,10 +41,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
             backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         
         .logo-text {
@@ -75,9 +79,16 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 22px;
             backdrop-filter: blur(10px);
             transition: all 0.2s ease;
+            padding: 8px;
+            overflow: hidden;
+        }
+        
+        .settings-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         
         .settings-btn:active {
@@ -250,13 +261,17 @@
 <body>
     <div class="header">
         <div class="logo-section">
-            <div class="logo-icon">🛡️</div>
+            <div class="logo-icon">
+                <img src="file:///android_res/drawable/logo.png" alt="Privacy First Logo">
+            </div>
             <div class="logo-text">
                 <div class="logo-title">PRIVACY FIRST</div>
                 <div class="logo-subtitle">Welcome, Nimit</div>
             </div>
         </div>
-        <button class="settings-btn" onclick="openSettings()">⚙️</button>
+        <button class="settings-btn" onclick="openSettings()">
+            <img src="file:///android_res/drawable/settings.png" alt="Settings">
+        </button>
     </div>
     
     <div class="content">
