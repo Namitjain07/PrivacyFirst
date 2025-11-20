@@ -13,12 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
+import com.secure.privacyfirst.data.AppLockManager
 import com.secure.privacyfirst.navigation.AppNavigation
 import com.secure.privacyfirst.ui.theme.PrivacyFirstTheme
 
 class MainActivity : AppCompatActivity() {
+    
+    private lateinit var appLockManager: AppLockManager
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize AppLockManager
+        appLockManager = AppLockManager.getInstance(application)
         
         // Enable WebView debugging
         WebView.setWebContentsDebuggingEnabled(true)

@@ -1,8 +1,11 @@
 package com.secure.privacyfirst
 
+import android.app.Application
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.fragment.app.FragmentActivity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,11 +21,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.secure.privacyfirst.data.AppLockManager
+import com.secure.privacyfirst.ui.screens.AppLockScreen
 import com.secure.privacyfirst.ui.theme.PrivacyFirstTheme
+import com.secure.privacyfirst.viewmodel.PasswordViewModel
 
-class TermsActivity : ComponentActivity() {
+class TermsActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -36,21 +47,35 @@ class TermsActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TermsScreen(onBackClick: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Terms and Conditions") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+    val context = LocalContext.current
+    val viewModel: PasswordViewModel = viewModel()
+    val appLockManager = AppLockManager.getInstance(context.applicationContext as Application)
+    
+    // Track PIN status and update AppLockManager
+    val isPinSet by viewModel.isPinSet.collectAsState()
+    LaunchedEffect(isPinSet) {
+        appLockManager.setPinConfigured(isPinSet)
+    }
+    
+    // Observe lock state
+    val isLocked by appLockManager.isAppLocked.collectAsState()
+    
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Terms and Conditions") },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
                     }
-                }
-            )
-        }
-    ) { paddingValues ->
+                )
+            }
+        ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -272,4 +297,14 @@ fun TermsScreen(onBackClick: () -> Unit) {
             )
         }
     }
+    
+    // Show lock screen overlay when app is locked
+    if (isLocked && isPinSet) {
+        AppLockScreen(
+            onUnlock = {
+                appLockManager.unlock()
+            }
+        )
+    }
+}
 }

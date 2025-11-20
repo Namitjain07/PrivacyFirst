@@ -1,9 +1,11 @@
 package com.secure.privacyfirst
 
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.fragment.app.FragmentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,17 +31,21 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.secure.privacyfirst.data.AppLockManager
 import com.secure.privacyfirst.data.SecurityLevel
 import com.secure.privacyfirst.data.UserPreferencesManager
+import com.secure.privacyfirst.ui.screens.AppLockScreen
 import com.secure.privacyfirst.ui.screens.PasswordManagerScreen
 import com.secure.privacyfirst.ui.screens.SetupPinScreen
 import com.secure.privacyfirst.ui.theme.PrivacyFirstTheme
+import com.secure.privacyfirst.viewmodel.PasswordViewModel
 import kotlinx.coroutines.launch
 
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -58,41 +65,63 @@ class SettingsActivity : ComponentActivity() {
 fun SettingsNavigation(onBackClick: () -> Unit) {
     val navController = rememberNavController()
     val context = LocalContext.current
+    val viewModel: PasswordViewModel = viewModel()
+    val appLockManager = AppLockManager.getInstance(context.applicationContext as Application)
     
-    NavHost(
-        navController = navController,
-        startDestination = "settings_main"
-    ) {
-        composable("settings_main") {
-            SettingsScreen(
-                onBackClick = onBackClick,
-                onNavigateToPasswordManager = {
-                    navController.navigate("password_manager")
-                },
-                onNavigateToSetupPin = {
-                    navController.navigate("setup_pin")
-                },
-                onNavigateToTerms = {
-                    context.startActivity(Intent(context, TermsActivity::class.java))
-                }
-            )
+    // Track PIN status and update AppLockManager
+    val isPinSet by viewModel.isPinSet.collectAsState()
+    LaunchedEffect(isPinSet) {
+        appLockManager.setPinConfigured(isPinSet)
+    }
+    
+    // Observe lock state
+    val isLocked by appLockManager.isAppLocked.collectAsState()
+    
+    Box(modifier = Modifier.fillMaxSize()) {
+        NavHost(
+            navController = navController,
+            startDestination = "settings_main"
+        ) {
+            composable("settings_main") {
+                SettingsScreen(
+                    onBackClick = onBackClick,
+                    onNavigateToPasswordManager = {
+                        navController.navigate("password_manager")
+                    },
+                    onNavigateToSetupPin = {
+                        navController.navigate("setup_pin")
+                    },
+                    onNavigateToTerms = {
+                        context.startActivity(Intent(context, TermsActivity::class.java))
+                    }
+                )
+            }
+            
+            composable("password_manager") {
+                PasswordManagerScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            
+            composable("setup_pin") {
+                SetupPinScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onPinSet = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
         
-        composable("password_manager") {
-            PasswordManagerScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
-        }
-        
-        composable("setup_pin") {
-            SetupPinScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onPinSet = {
-                    navController.popBackStack()
+        // Show lock screen overlay when app is locked
+        if (isLocked && isPinSet) {
+            AppLockScreen(
+                onUnlock = {
+                    appLockManager.unlock()
                 }
             )
         }
