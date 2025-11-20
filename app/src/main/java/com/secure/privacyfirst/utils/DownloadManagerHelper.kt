@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.webkit.URLUtil
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.secure.privacyfirst.data.DownloadItem
 import com.secure.privacyfirst.data.DownloadStatus
@@ -47,18 +48,12 @@ class DownloadManagerHelper(private val context: Context) {
             }
         }
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(
-                receiver,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
-                Context.RECEIVER_NOT_EXPORTED
-            )
-        } else {
-            context.registerReceiver(
-                receiver,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-            )
-        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
     
     fun startDownload(
