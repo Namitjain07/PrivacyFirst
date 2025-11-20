@@ -216,10 +216,10 @@ fun AuthScreen(
                 .height(56.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50),
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFFDCDCDC),
-                disabledContentColor = Color.DarkGray
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
             Text("SUBMIT", color = Color.DarkGray)
