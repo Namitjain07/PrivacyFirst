@@ -25,10 +25,20 @@ class MainActivity : AppCompatActivity() {
         
         enableEdgeToEdge()
         
-        // Make status bar transparent
+        // Edge-to-edge automatically handles system bar colors
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.Transparent.toArgb()
-        window.navigationBarColor = Color.Transparent.toArgb()
+        
+        // Handle back button press using OnBackPressedDispatcher (modern approach)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Custom back navigation logic can be added here
+                // For default behavior, finish the activity or let the system handle it
+                if (isEnabled) {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
         
         setContent {
             PrivacyFirstTheme {
@@ -40,10 +50,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        // Handle back button press
-        super.onBackPressedDispatcher.onBackPressed()
     }
 }

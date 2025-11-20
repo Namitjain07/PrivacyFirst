@@ -6,22 +6,47 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.secure.privacyfirst.R
+import com.secure.privacyfirst.data.UserPreferencesManager
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    onNavigateToOnboarding: () -> Unit
+    onNavigateToOnboarding: () -> Unit,
+    onNavigateToSetup: () -> Unit,
+    onNavigateToAuth: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
+    val context = LocalContext.current
+    val preferencesManager = UserPreferencesManager(context)
+    
+    val isOnboardingCompleted by preferencesManager.isOnboardingCompleted.collectAsState(initial = null)
+    val isSetupCompleted by preferencesManager.isSetupCompleted.collectAsState(initial = null)
+    
+    LaunchedEffect(isOnboardingCompleted, isSetupCompleted) {
+        // Wait until both values are loaded
+        val onboardingDone = isOnboardingCompleted
+        val setupDone = isSetupCompleted
+        
+        if (onboardingDone == null || setupDone == null) {
+            return@LaunchedEffect
+        }
+        
         delay(2500)
-        onNavigateToOnboarding()
+        
+        when {
+            !onboardingDone -> onNavigateToOnboarding()
+            !setupDone -> onNavigateToSetup()
+            else -> onNavigateToAuth()
+        }
     }
     
     Box(

@@ -13,18 +13,18 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #F5F5F5;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
             min-height: 100vh;
             padding: 0;
         }
         
         .header {
-            background: white;
-            padding: 16px 20px;
+            background: linear-gradient(135deg, #1E3A5F 0%, #2c5282 100%);
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid #E0E0E0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .logo-section {
@@ -34,16 +34,17 @@
         }
         
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: #1E3A5F;
-            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
+            backdrop-filter: blur(10px);
         }
         
         .logo-text {
@@ -52,31 +53,36 @@
         }
         
         .logo-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1E3A5F;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
         }
         
         .logo-subtitle {
             font-size: 12px;
-            color: #666;
+            color: rgba(255,255,255,0.8);
+            margin-top: 2px;
         }
         
         .settings-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border: none;
-            background: #F0F0F0;
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 22px;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
         }
         
         .settings-btn:active {
-            background: #E0E0E0;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0.95);
         }
         
         .content {
@@ -85,23 +91,39 @@
         
         .search-box {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #E0E0E0;
-            border-radius: 25px;
-            font-size: 14px;
+            padding: 14px 20px;
+            border: 2px solid #e0e7ef;
+            border-radius: 30px;
+            font-size: 15px;
             background: white;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #1E3A5F;
+            box-shadow: 0 4px 12px rgba(30,58,95,0.15);
         }
         
         .search-box::placeholder {
             color: #999;
         }
         
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E3A5F;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+        
         .banks-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
         
         .bank-item {
@@ -110,60 +132,86 @@
             align-items: center;
             text-decoration: none;
             color: inherit;
+            transition: transform 0.2s ease;
+        }
+        
+        .bank-item:active {
+            transform: scale(0.95);
         }
         
         .bank-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
+            width: 68px;
+            height: 68px;
+            border-radius: 18px;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            font-size: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .bank-item:hover .bank-icon {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .bank-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .bank-name {
             font-size: 12px;
             color: #333;
             text-align: center;
+            font-weight: 500;
         }
         
         .info-card {
-            background: #1A3A2E;
-            border-radius: 16px;
+            background: linear-gradient(135deg, #1E3A5F 0%, #2c5282 100%);
+            border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(30,58,95,0.2);
         }
         
         .info-card-image {
             width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, #1A4D2E 0%, #2C6E49 100%);
+            height: 140px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
+            font-size: 64px;
+            backdrop-filter: blur(10px);
         }
         
         .info-card-text {
-            padding: 16px;
+            padding: 20px;
             background: white;
         }
         
         .info-card-title {
-            font-size: 14px;
+            font-size: 15px;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-weight: 500;
         }
         
         .footer-text {
             text-align: center;
-            font-size: 12px;
-            color: #999;
-            padding: 16px;
+            font-size: 13px;
+            color: #666;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
         
         .footer-link {
@@ -172,20 +220,29 @@
             font-weight: 600;
         }
         
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
         .lock-icon {
-            color: #999;
-            margin-right: 4px;
+            color: #4CAF50;
+            margin-right: 6px;
+            font-size: 16px;
         }
 
         @media (max-width: 600px) {
             .banks-grid {
                 grid-template-columns: repeat(4, 1fr);
-                gap: 12px;
+                gap: 14px;
             }
             
             .bank-icon {
-                width: 56px;
-                height: 56px;
+                width: 60px;
+                height: 60px;
+            }
+            
+            .bank-name {
+                font-size: 11px;
             }
         }
     </style>
@@ -195,7 +252,7 @@
         <div class="logo-section">
             <div class="logo-icon">🛡️</div>
             <div class="logo-text">
-                <div class="logo-title">PRIVACY FIRST <span style="color: #999; font-weight: normal;">BROWSER</span></div>
+                <div class="logo-title">PRIVACY FIRST</div>
                 <div class="logo-subtitle">Welcome, Nimit</div>
             </div>
         </div>
@@ -203,62 +260,82 @@
     </div>
     
     <div class="content">
-        <input type="text" class="search-box" placeholder="Search" id="searchBox" oninput="filterBanks()">
+        <input type="text" class="search-box" placeholder="🔍 Search for your bank..." id="searchBox" oninput="filterBanks()">
+        
+        <div class="section-title">Trusted Banking Partners</div>
         
         <div class="banks-grid" id="banksGrid">
             <a href="https://onlinesbi.sbi.bank.in/" class="bank-item" data-name="SBI">
-                <div class="bank-icon" style="background: #E8F4FD;">💼</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/sbi.png" alt="SBI">
+                </div>
                 <div class="bank-name">SBI</div>
             </a>
             
             <a href="https://infinity.icicibank.com/corp/AuthenticationController?FORMSGROUP_ID__=AuthenticationFG&__START_TRAN_FLAG__=Y&FG_BUTTONS__=LOAD&ACTION.LOAD=Y&AuthenticationFG.LOGIN_FLAG=1&BANK_ID=ICI" class="bank-item" data-name="ICICI">
-                <div class="bank-icon" style="background: #FFF0E8;">🏦</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/icici.png" alt="ICICI">
+                </div>
                 <div class="bank-name">ICICI</div>
             </a>
             
             <a href="https://netbanking.kotak.com/knb2/" class="bank-item" data-name="Kotak">
-                <div class="bank-icon" style="background: #E8F0FF;">🔵</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/kotak.png" alt="Kotak">
+                </div>
                 <div class="bank-name">Kotak</div>
             </a>
             
             <a href="https://www.yesbank.in/digital-banking/yes-netbanking" class="bank-item" data-name="YES">
-                <div class="bank-icon" style="background: #FFE8E8;">✓</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/yes.png" alt="YES">
+                </div>
                 <div class="bank-name">YES</div>
             </a>
             
             <a href="https://www.online.citibank.co.in/portal/newgen/login.c" class="bank-item" data-name="Citi">
-                <div class="bank-icon" style="background: #E8F0FF;">🏛️</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/citi.png" alt="Citi">
+                </div>
                 <div class="bank-name">Citi</div>
             </a>
             
             <a href="https://www.americanexpress.com/en-in/account/login" class="bank-item" data-name="AMEX">
-                <div class="bank-icon" style="background: #E8F4FD;">💳</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/ae.png" alt="AMEX">
+                </div>
                 <div class="bank-name">AMEX</div>
             </a>
             
             <a href="https://www.ucobank.com/english/internet-banking.aspx" class="bank-item" data-name="UCO">
-                <div class="bank-icon" style="background: #E8F0FF;">🏢</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/uco.png" alt="UCO">
+                </div>
                 <div class="bank-name">UCO</div>
             </a>
             
             <a href="https://www.indusind.com/in/en/personal/digital-banking/indusnet.html" class="bank-item" data-name="IndusInd">
-                <div class="bank-icon" style="background: #FFE8F0;">🦁</div>
+                <div class="bank-icon">
+                    <img src="file:///android_res/drawable/indus.png" alt="IndusInd">
+                </div>
                 <div class="bank-name">IndusInd</div>
             </a>
         </div>
         
         <div class="info-card">
-            <div class="info-card-image">💳</div>
+            <div class="info-card-image">🔐</div>
             <div class="info-card-text">
-                <div class="info-card-title">Online banking security: Top practices for safe banking</div>
+                <div class="info-card-title">🛡️ Your Security is Our Priority<br><br>We use end-to-end encryption and multi-layer security to protect your banking sessions from phishing and unauthorized access.</div>
             </div>
         </div>
         
         <div class="footer-text">
             <span class="lock-icon">🔒</span>
-            Banking sessions are encrypted & phishing-protected
+            <strong>Banking sessions are encrypted & phishing-protected</strong>
+            <br><br>
+            All connections are secured with SSL/TLS encryption
             <br>
-            <a href="#" class="footer-link">Learn more</a>
+            <a href="#" class="footer-link">Learn more about our security →</a>
         </div>
     </div>
     

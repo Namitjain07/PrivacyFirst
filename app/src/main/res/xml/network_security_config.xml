@@ -8,6 +8,13 @@
         </trust-anchors>
     </base-config>
     
+    <!-- Allow cleartext traffic for local API server -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.2.244</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+    
     <!-- Specific config for SBI and other banking sites -->
     <domain-config cleartextTrafficPermitted="false">
         <domain includeSubdomains="true">sbi.bank.in</domain>

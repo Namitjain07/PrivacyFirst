@@ -14,11 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.secure.privacyfirst.data.UserPreferencesManager
 import com.secure.privacyfirst.model.OnboardingPage
 import com.secure.privacyfirst.model.onboardingPages
 import kotlinx.coroutines.launch
@@ -30,6 +32,8 @@ fun OnboardingScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val preferencesManager = UserPreferencesManager(context)
     
     Column(
         modifier = Modifier
@@ -71,7 +75,10 @@ fun OnboardingScreen(
         Button(
             onClick = {
                 if (pagerState.currentPage == onboardingPages.size - 1) {
-                    onFinish()
+                    scope.launch {
+                        preferencesManager.setOnboardingCompleted()
+                        onFinish()
+                    }
                 } else {
                     scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)

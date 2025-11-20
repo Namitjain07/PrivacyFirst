@@ -6,7 +6,7 @@ import com.secure.privacyfirst.R
 data class OnboardingPage(
     val title: String,
     val description: String,
-    @DrawableRes val image: Int
+    @param:DrawableRes val image: Int
 )
 
 val onboardingPages = listOf(
