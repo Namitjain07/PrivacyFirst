@@ -240,6 +240,31 @@
             margin-right: 6px;
             font-size: 16px;
         }
+        
+        .test-button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-button:active {
+            transform: translateY(0);
+        }
 
         @media (max-width: 600px) {
             .banks-grid {
@@ -276,6 +301,10 @@
     
     <div class="content">
         <input type="text" class="search-box" placeholder="🔍 Search for your bank..." id="searchBox" oninput="filterBanks()">
+        
+        <!-- <a href="test.html" class="test-button">
+            🧪 Test Features (Camera, Mic, Downloads)
+        </a> -->
         
         <div class="section-title">Trusted Banking Partners</div>
         
