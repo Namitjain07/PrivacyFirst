@@ -27,6 +27,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.secure.privacyfirst.auth.AuthStateManager
 import com.secure.privacyfirst.navigation.Screen
 import com.secure.privacyfirst.viewmodel.PasswordViewModel
 import kotlinx.coroutines.launch
@@ -75,6 +76,8 @@ fun AuthScreen(
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     Toast.makeText(context, "Authenticated", Toast.LENGTH_SHORT).show()
+                    // Mark user as authenticated
+                    AuthStateManager.setAuthenticated(true)
                     if (navController != null) {
                         navController.navigate(Screen.WebView.route) {
                             popUpTo(Screen.Auth.route) { inclusive = true }
@@ -205,6 +208,8 @@ fun AuthScreen(
 
                     if (valid) {
                         Toast.makeText(context, "PIN Accepted", Toast.LENGTH_SHORT).show()
+                        // Mark user as authenticated
+                        AuthStateManager.setAuthenticated(true)
                         if (navController != null) {
                             navController.navigate(Screen.WebView.route) {
                                 popUpTo(Screen.Auth.route) { inclusive = true }

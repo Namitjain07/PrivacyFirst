@@ -1,10 +1,14 @@
 package com.secure.privacyfirst.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.secure.privacyfirst.auth.AuthStateManager
 import com.secure.privacyfirst.data.AppDatabase
 import com.secure.privacyfirst.ui.screens.OnboardingScreen
 import com.secure.privacyfirst.ui.screens.SetupScreen
@@ -19,6 +23,27 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val database = AppDatabase.getDatabase(context)
+    
+    // Observe authentication state
+    val requiresAuth by AuthStateManager.requiresAuth.collectAsState()
+    val isAuthenticated by AuthStateManager.isAuthenticated.collectAsState()
+    
+    // When app comes back from background and requires auth, navigate to Auth screen
+    LaunchedEffect(requiresAuth) {
+        if (requiresAuth && !isAuthenticated) {
+            val currentRoute = navController.currentBackStackEntry?.destination?.route
+            // Only navigate if we're not already on auth/splash/setup/onboarding screens
+            if (currentRoute != Screen.Auth.route && 
+                currentRoute != Screen.Splash.route && 
+                currentRoute != Screen.Setup.route && 
+                currentRoute != Screen.Onboarding.route) {
+                navController.navigate(Screen.Auth.route) {
+                    // Don't pop the back stack - just overlay auth screen
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
     
     NavHost(
         navController = navController,

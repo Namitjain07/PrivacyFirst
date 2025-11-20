@@ -89,6 +89,7 @@ dependencies {
     // Lifecycle
     implementation libs.androidx.lifecycle.viewmodel.compose
     implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.androidx.lifecycle.process
     
     // DataStore for saving onboarding state
     implementation libs.androidx.datastore.preferences
