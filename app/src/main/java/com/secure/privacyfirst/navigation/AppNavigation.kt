@@ -2,6 +2,7 @@ package com.secure.privacyfirst.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -19,7 +20,7 @@ import com.secure.privacyfirst.ui.screens.PasswordManagerScreen
 import com.secure.privacyfirst.ui.screens.SetupPinScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(pendingUrlState: MutableState<String?>? = null) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val database = AppDatabase.getDatabase(context)
@@ -91,7 +92,7 @@ fun AppNavigation() {
         }
         
         composable(Screen.WebView.route) {
-            WebViewScreen()
+            WebViewScreen(externalUrl = pendingUrlState?.value)
         }
 
         composable(Screen.Auth.route) {

@@ -1,6 +1,9 @@
 package com.secure.privacyfirst
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
@@ -9,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -20,7 +24,12 @@ import com.secure.privacyfirst.auth.AuthStateManager
 import com.secure.privacyfirst.navigation.AppNavigation
 import com.secure.privacyfirst.ui.theme.PrivacyFirstTheme
 
+private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
+    
+    // Mutable state to hold the incoming URL from external sources
+    private val pendingUrl = mutableStateOf<String?>(null)
     
     private val appLifecycleObserver = object : DefaultLifecycleObserver {
         override fun onStop(owner: LifecycleOwner) {
@@ -41,6 +50,9 @@ class MainActivity : AppCompatActivity() {
         
         // Enable WebView debugging
         WebView.setWebContentsDebuggingEnabled(true)
+        
+        // Handle incoming intent URL
+        handleIncomingIntent(intent)
         
         enableEdgeToEdge()
         
@@ -68,7 +80,27 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation()
+                    AppNavigation(pendingUrlState = pendingUrl)
+                }
+            }
+        }
+    }
+    
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Handle new intents when app is already running
+        handleIncomingIntent(intent)
+    }
+    
+    private fun handleIncomingIntent(intent: Intent?) {
+        intent?.let {
+            when (it.action) {
+                Intent.ACTION_VIEW -> {
+                    val url = it.data?.toString()
+                    if (!url.isNullOrEmpty()) {
+                        Log.d(TAG, "Received external URL: $url")
+                        pendingUrl.value = url
+                    }
                 }
             }
         }

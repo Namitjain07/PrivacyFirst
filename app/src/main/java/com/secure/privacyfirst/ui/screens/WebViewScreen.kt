@@ -56,9 +56,10 @@ import kotlinx.coroutines.launch
 private const val TAG = "WebViewScreen"
 private const val CAMERA_PERMISSION_REQUEST_CODE = 100
 private const val MIC_PERMISSION_REQUEST_CODE = 101
+private const val DEFAULT_URL = "file:///android_asset/index.html"
 
 @Composable
-fun WebViewScreen() {
+fun WebViewScreen(externalUrl: String? = null) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferencesManager = remember { UserPreferencesManager(context) }
@@ -72,12 +73,16 @@ fun WebViewScreen() {
     var whitelistUrls by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoadingWhitelist by remember { mutableStateOf(true) }
     
+    // External URL state
+    var urlToLoad by remember { mutableStateOf(externalUrl) }
+    var initialUrlLoaded by remember { mutableStateOf(false) }
+    
     // Warning dialog states
     var showCameraWarning by remember { mutableStateOf(false) }
     var showMicWarning by remember { mutableStateOf(false) }
     var showExternalAppWarning by remember { mutableStateOf(false) }
     var showExitDialog by remember { mutableStateOf(false) }
-    var externalUrl by remember { mutableStateOf("") }
+    var externalUrlDialog by remember { mutableStateOf("") }
     var pendingPermissionRequest by remember { mutableStateOf<PermissionRequest?>(null) }
     
     // Fetch whitelist on start
@@ -358,7 +363,7 @@ fun WebViewScreen() {
                             
                             if (!isAllowed) {
                                 // Show external app warning instead of blocking directly
-                                externalUrl = url
+                                externalUrlDialog = url
                                 showExternalAppWarning = true
                                 Log.w(TAG, "Non-whitelisted domain attempted: $host")
                                 return true
@@ -519,29 +524,44 @@ fun WebViewScreen() {
                         }
                     }
                     
-                    // Load custom HTML from assets with user's name
+                    // Load initial URL (external or default)
                     try {
-                        val htmlContent = context.assets.open("index.html").bufferedReader().use { it.readText() }
-                        val displayName = if (userName.isNotBlank()) userName else "User"
-                        Log.d(TAG, "Loading HTML with userName: '$displayName'")
-                        val personalizedHtml = htmlContent.replace("Welcome, Nimit", "Welcome, $displayName")
-                        loadDataWithBaseURL(
-                            "file:///android_asset/",
-                            personalizedHtml,
-                            "text/html",
-                            "UTF-8",
-                            null
-                        )
+                        val initialUrl = urlToLoad ?: DEFAULT_URL
+                        if (initialUrl.startsWith("http://") || initialUrl.startsWith("https://")) {
+                            // Load external URL
+                            Log.d(TAG, "Loading external URL: $initialUrl")
+                            loadUrl(initialUrl)
+                        } else {
+                            // Load custom HTML from assets with user's name
+                            val htmlContent = context.assets.open("index.html").bufferedReader().use { it.readText() }
+                            val displayName = if (userName.isNotBlank()) userName else "User"
+                            Log.d(TAG, "Loading HTML with userName: '$displayName'")
+                            val personalizedHtml = htmlContent.replace("Welcome, Nimit", "Welcome, $displayName")
+                            loadDataWithBaseURL(
+                                "file:///android_asset/",
+                                personalizedHtml,
+                                "text/html",
+                                "UTF-8",
+                                null
+                            )
+                        }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error loading HTML: ${e.message}", e)
-                        loadUrl("file:///android_asset/index.html")
+                        Log.e(TAG, "Error loading content: ${e.message}", e)
+                        loadUrl(DEFAULT_URL)
                     }
                 }.also { webView = it }
             },
             update = { view ->
                 webView = view
-                // Reload with updated userName when it changes
-                if (userName.isNotBlank()) {
+                
+                // Handle external URL when it changes
+                if (!initialUrlLoaded && urlToLoad != null && 
+                    (urlToLoad!!.startsWith("http://") || urlToLoad!!.startsWith("https://"))) {
+                    Log.d(TAG, "Loading external URL in update: $urlToLoad")
+                    view.loadUrl(urlToLoad!!)
+                    initialUrlLoaded = true
+                } else if (userName.isNotBlank() && urlToLoad == null) {
+                    // Reload with updated userName when it changes (only for default HTML)
                     try {
                         val htmlContent = context.assets.open("index.html").bufferedReader().use { it.readText() }
                         val personalizedHtml = htmlContent.replace("Welcome, Nimit", "Welcome, $userName")
@@ -559,6 +579,13 @@ fun WebViewScreen() {
                 }
             }
         )
+    }
+    
+    // LaunchedEffect to handle external URL changes
+    LaunchedEffect(externalUrl) {
+        if (externalUrl != null && !initialUrlLoaded) {
+            urlToLoad = externalUrl
+        }
     }
     
     // Warning Dialogs
@@ -634,14 +661,14 @@ fun WebViewScreen() {
     
     if (showExternalAppWarning) {
         ExternalAppWarningDialog(
-            url = externalUrl,
+            url = externalUrlDialog,
             onDismiss = { 
                 showExternalAppWarning = false
             },
             onProceed = {
                 showExternalAppWarning = false
                 // User chose to proceed - load the external URL
-                webView?.loadUrl(externalUrl)
+                webView?.loadUrl(externalUrlDialog)
                 Log.w(TAG, "User proceeded to external URL: $externalUrl")
             },
             onCancel = {
