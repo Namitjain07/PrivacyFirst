@@ -50,6 +50,7 @@ import com.secure.privacyfirst.network.WhitelistRepository
 import com.secure.privacyfirst.ui.components.CameraAccessWarningDialog
 import com.secure.privacyfirst.ui.components.ExternalAppWarningDialog
 import com.secure.privacyfirst.ui.components.MicrophoneAccessWarningDialog
+import com.secure.privacyfirst.utils.DownloadManagerHelper
 import kotlinx.coroutines.launch
 
 private const val TAG = "WebViewScreen"
@@ -62,6 +63,7 @@ fun WebViewScreen() {
     val scope = rememberCoroutineScope()
     val preferencesManager = remember { UserPreferencesManager(context) }
     val whitelistRepository = remember { WhitelistRepository(context) }
+    val downloadManagerHelper = remember { DownloadManagerHelper(context) }
     val securityLevel by preferencesManager.securityLevel.collectAsState(initial = SecurityLevel.MEDIUM)
     val userName by preferencesManager.userName.collectAsState(initial = "")
     var webView by remember { mutableStateOf<WebView?>(null) }
@@ -238,26 +240,44 @@ fun WebViewScreen() {
                             }
                             
                             // Allow downloads for LOW and MEDIUM security
-                            url?.let {
+                            url?.let { downloadUrl ->
                                 try {
-                                    val request = DownloadManager.Request(Uri.parse(url))
-                                    request.setMimeType(mimetype)
-                                    request.setNotificationVisibility(
-                                        DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+                                    // Extract filename from content disposition or URL
+                                    val filename = android.webkit.URLUtil.guessFileName(
+                                        downloadUrl,
+                                        contentDisposition,
+                                        mimetype
                                     )
-                                    request.setDestinationInExternalPublicDir(
-                                        Environment.DIRECTORY_DOWNLOADS,
-                                        "download"
+                                    
+                                    // Use DownloadManagerHelper to track downloads
+                                    val downloadId = downloadManagerHelper.startDownload(
+                                        url = downloadUrl,
+                                        filename = filename,
+                                        mimeType = mimetype,
+                                        showNotification = true
                                     )
-                                    val dm = ctx.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                                    dm.enqueue(request)
-                                    Toast.makeText(ctx, "Downloading file...", Toast.LENGTH_SHORT).show()
+                                    
+                                    if (downloadId != -1L) {
+                                        Toast.makeText(
+                                            ctx,
+                                            "Downloading $filename...",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        Log.d(TAG, "Download started: $filename (ID: $downloadId)")
+                                    } else {
+                                        Toast.makeText(
+                                            ctx,
+                                            "Failed to start download",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 } catch (e: Exception) {
                                     Toast.makeText(
                                         ctx,
                                         "Download failed: ${e.message}",
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                    Log.e(TAG, "Download error", e)
                                 }
                             }
                         }

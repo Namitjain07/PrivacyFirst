@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.secure.privacyfirst.data.SecurityLevel
 import com.secure.privacyfirst.data.UserPreferencesManager
+import com.secure.privacyfirst.ui.screens.DownloadsScreen
 import com.secure.privacyfirst.ui.screens.PasswordManagerScreen
 import com.secure.privacyfirst.ui.screens.SetupPinScreen
 import com.secure.privacyfirst.ui.theme.PrivacyFirstTheme
@@ -74,6 +75,9 @@ fun SettingsNavigation(onBackClick: () -> Unit) {
                 onNavigateToSetupPin = {
                     navController.navigate("setup_pin")
                 },
+                onNavigateToDownloads = {
+                    navController.navigate("downloads")
+                },
                 onNavigateToTerms = {
                     context.startActivity(Intent(context, TermsActivity::class.java))
                 }
@@ -98,6 +102,14 @@ fun SettingsNavigation(onBackClick: () -> Unit) {
                 }
             )
         }
+        
+        composable("downloads") {
+            DownloadsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }
 
@@ -107,6 +119,7 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     onNavigateToPasswordManager: () -> Unit = {},
     onNavigateToSetupPin: () -> Unit = {},
+    onNavigateToDownloads: () -> Unit = {},
     onNavigateToTerms: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -316,6 +329,20 @@ fun SettingsScreen(
                 description = "Create or change your security PIN",
                 icon = Icons.Outlined.Pin,
                 onClick = onNavigateToSetupPin
+            )
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            SectionHeader(
+                title = "Storage",
+                icon = Icons.Filled.Folder
+            )
+            
+            SettingsItem(
+                title = "Downloads",
+                description = "View and manage downloaded files",
+                icon = Icons.Outlined.FileDownload,
+                onClick = onNavigateToDownloads
             )
             
             Spacer(modifier = Modifier.height(32.dp))
