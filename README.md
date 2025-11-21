@@ -8,6 +8,8 @@
 
 **A secure, privacy-focused mobile browser for Android with advanced banking security features**
 
+[GitHub Repository](https://github.com/Namitjain07/PrivacyFirst.git)
+
 </div>
 
 ## 📱 Overview
@@ -343,7 +345,7 @@ private val cacheDuration = 5 * 60 * 1000L // 5 minutes
 | API Response (network) | ~2-3 seconds |
 | Network Call Reduction | 90% (with caching) |
 
-## 🧪 Testing
+<!-- ## 🧪 Testing
 
 ### Test Deep Linking
 ```bash
@@ -352,7 +354,7 @@ adb shell am start -a android.intent.action.VIEW -d "https://www.example.com" co
 
 # Test custom deep link
 adb shell am start -a android.intent.action.VIEW -d "privacyfirst://open" com.secure.privacyfirst
-```
+``` -->
 
 ### Test API
 ```bash
